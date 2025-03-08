@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Set a global background image */
+body {
+    background-image: url('../assets/background.jpg'); /* Adjust the path as necessary */
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center; /* Center the image */
+    color: #ffffff; /* White text */
+}
+
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
