@@ -66,10 +66,6 @@ const Home = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseEdit = () => {
-    setEditingItemId(null);
-  };
-
   const handleDeleteClick = async (itemId) => {
     try {
       await axiosInstance.delete(`/clothing/${itemId}`);
