@@ -1,8 +1,34 @@
 import { useState } from 'react';
 import axiosInstance from '../utils/axiosInstance';
-import Button from './Button'; // Import the Button component
+import Button from './Button';
+import ColorSelect from './ColorSelect';
 
-const locations = ["London", "Stockholm"]; // Define available locations
+const locations = ["London", "Stockholm"];
+
+const categories = [
+  "Dress",
+  "Shirt",
+  "T-Shirt",
+  "Blouse",
+  "Sweater",
+  "Jacket",
+  "Coat",
+  "Pants",
+  "Jeans",
+  "Skirt",
+  "Shorts",
+  "Suit",
+  "Blazer",
+  "Hat",
+  "Scarf",
+  "Belt",
+  "Shoes",
+  "Boots",
+  "Sneakers",
+  "Bag",
+  "Accessories"
+];
+
 const colors = [
   "Beige",
   "Black",
@@ -16,24 +42,25 @@ const colors = [
   "Yellow",
 ];
 
-const EditClothingItem = ({ item, onItemUpdated, onClose }) => {
+const EditClothingItem = ({ item: initialItem, onItemUpdated, onClose }) => {
   const [loading, setLoading] = useState(false);
-  const [imageFile, setImageFile] = useState(null); // State for the image file
+  const [imageFile, setImageFile] = useState(null); 
+  const [item, setItem] = useState(initialItem);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Prepare the form data
     const formData = new FormData();
     formData.append('name', item.name);
     formData.append('category', item.category);
     formData.append('main_color', item.main_color);
-    formData.append('secondary_color', item.secondary_color);
+    if (item.secondary_color) { 
+      formData.append('secondary_color', item.secondary_color);
+    }
     formData.append('location', item.location);
-    formData.append('count', item.count); // Include count in the form data
+    formData.append('count', item.count || '1'); 
     
-    // If a new image is uploaded, append it to the form data
     if (imageFile) {
       formData.append('image_url', imageFile);
     }
@@ -54,7 +81,6 @@ const EditClothingItem = ({ item, onItemUpdated, onClose }) => {
     <form onSubmit={handleSubmit} className="mb-4 p-4 border rounded shadow">
       <h2 className="text-lg font-semibold mb-2">Edit Clothing Item</h2>
       
-      {/* Current Image Display */}
       {item.image_url && (
         <div className="mb-4">
           <img src={item.image_url} alt="Current" className="w-full h-32 object-cover mb-2 rounded" />
@@ -72,39 +98,34 @@ const EditClothingItem = ({ item, onItemUpdated, onClose }) => {
       />
       
       <label className="block mb-1">Category</label>
-      <input
-        type="text"
-        placeholder="Category"
+      <select
         value={item.category}
         onChange={(e) => setItem({ ...item, category: e.target.value })}
-        className="border rounded p-2 mb-2 w-full"
+        className="border rounded p-2 mb-2 w-full bg-gray-800 text-white"
         required
-      />
+      >
+        <option value="">Select Category</option>
+        {categories.map((cat) => (
+          <option key={cat} value={cat}>{cat}</option>
+        ))}
+      </select>
       
       <label className="block mb-1">Main Color</label>
-      <select
+      <ColorSelect
         value={item.main_color}
-        onChange={(e) => setItem({ ...item, main_color: e.target.value })}
-        className="border rounded p-2 mb-2 w-full"
+        onChange={(color) => setItem({ ...item, main_color: color })}
         required
-      >
-        <option value="">Select Main Color</option>
-        {colors.map((color) => (
-          <option key={color} value={color}>{color}</option>
-        ))}
-      </select>
+        placeholder="Select Main Color"
+        colors={colors}
+      />
       
-      <label className="block mb-1">Secondary Color</label>
-      <select
-        value={item.secondary_color}
-        onChange={(e) => setItem({ ...item, secondary_color: e.target.value })}
-        className="border rounded p-2 mb-2 w-full"
-      >
-        <option value="">Select Secondary Color</option>
-        {colors.map((color) => (
-          <option key={color} value={color}>{color}</option>
-        ))}
-      </select>
+      <label className="block mb-1">Secondary Color (Optional)</label>
+      <ColorSelect
+        value={item.secondary_color || ''}
+        onChange={(color) => setItem({ ...item, secondary_color: color })}
+        placeholder="No Secondary Color"
+        colors={colors}
+      />
       
       <label className="block mb-1">Location</label>
       <select
@@ -119,11 +140,12 @@ const EditClothingItem = ({ item, onItemUpdated, onClose }) => {
         ))}
       </select>
       
-      <label className="block mb-1">Count (optional)</label>
+      <label className="block mb-1">Count (Optional)</label>
       <input
         type="number"
-        placeholder="Count"
-        value={item.count}
+        min="1"
+        placeholder="1"
+        value={item.count || '1'}
         onChange={(e) => setItem({ ...item, count: e.target.value })}
         className="border rounded p-2 mb-2 w-full"
       />

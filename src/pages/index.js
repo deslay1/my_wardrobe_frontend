@@ -121,7 +121,15 @@ const Home = () => {
     <div className="container mx-auto p-4 text-white">
       <h1 className="text-3xl font-bold mb-4 text-center">Digital Wardrobe</h1>
       <div className="flex flex-col items-center mb-4">
-        <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white rounded p-2 mb-4">Add Item</button>
+        <button 
+          onClick={() => {
+            setIsEditing(false);
+            setIsModalOpen(true);
+          }} 
+          className="bg-green-500 text-white rounded p-2 mb-4"
+        >
+          Add Item
+        </button>
         <input
           type="text"
           placeholder="Search clothing items..."
@@ -164,7 +172,13 @@ const Home = () => {
             }}
           />
         ) : (
-          <AddClothingItem onItemAdded={handleItemAdded} />
+          <AddClothingItem 
+            onItemAdded={handleItemAdded} 
+            onClose={() => {
+              setIsModalOpen(false);
+              setIsEditing(false);
+            }}
+          />
         )}
       </Modal>
       

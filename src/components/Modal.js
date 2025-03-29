@@ -6,9 +6,13 @@ const Modal = ({ isOpen, onClose, children }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
-      <div className="bg-gray-800 p-4 rounded shadow-lg">
-        <Button onClick={onClose} type="red" className="mb-4">Close</Button>
-        {children}
+      <div className="relative bg-gray-800 rounded shadow-lg max-h-[90vh] w-[90vw] md:w-auto overflow-y-auto">
+        <div className="sticky top-0 bg-gray-800 p-4 border-b border-gray-700">
+          <Button onClick={onClose} type="red">Close</Button>
+        </div>
+        <div className="p-4">
+          {children}
+        </div>
       </div>
     </div>
   );
