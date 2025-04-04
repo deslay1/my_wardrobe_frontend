@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image';
 import axiosInstance from '../utils/axiosInstance';
 import Button from './Button';
 import ColorSelect from './ColorSelect';
@@ -83,8 +84,14 @@ const EditClothingItem = ({ item: initialItem, onItemUpdated, onClose }) => {
       <h2 className="text-lg font-semibold mb-2">Edit Clothing Item</h2>
       
       {item.image_url && (
-        <div className="mb-4">
-          <img src={item.image_url} alt="Current" className="w-full h-32 object-cover mb-2 rounded" />
+        <div className="mb-4 relative h-32">
+          <Image
+            src={item.image_url}
+            alt="Current"
+            fill
+            className="object-cover rounded"
+            sizes="(max-width: 768px) 100vw, 400px"
+          />
         </div>
       )}
       

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
+import Image from 'next/image';
 import axiosInstance from '../utils/axiosInstance';
 import AddClothingItem from '../components/AddClothingItem';
 import EditClothingItem from '../components/EditClothingItem';
@@ -27,8 +28,6 @@ import {
   GiLabCoat,
   GiSleevelessJacket
 } from 'react-icons/gi';
-
-const CARD_WIDTH = '250px'; // You can adjust this value as needed
 
 const categories = [
   "Dress",
@@ -173,16 +172,13 @@ const Home = () => {
     setShowImageModal(true);
   };
 
-  const colors = [...new Set(clothingItems.map(item => item.main_color))]; // Unique colors
-
   const filteredItems = clothingItems.filter(item => {
-    return (
-      (item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-       item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       item.main_color.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (selectedCategory === '' || item.category === selectedCategory) &&
-      (selectedColor === '' || item.main_color === selectedColor)
-    );
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.main_color.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = !selectedCategory || item.category === selectedCategory;
+    const matchesColor = !selectedColor || item.main_color === selectedColor;
+    return matchesSearch && matchesCategory && matchesColor;
   });
 
   // Get category icon component
@@ -288,11 +284,15 @@ const Home = () => {
       <Modal isOpen={showImageModal} onClose={() => setShowImageModal(false)}>
         <div className="flex justify-center items-center h-full">
           {selectedImage && (
-            <img 
-              src={selectedImage} 
-              alt="Enlarged view" 
-              className="max-h-[80vh] max-w-[80vw] object-contain"
-            />
+            <div className="relative w-full h-[80vh]">
+              <Image
+                src={selectedImage}
+                alt="Selected clothing item"
+                fill
+                style={{ objectFit: 'contain' }}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+              />
+            </div>
           )}
         </div>
       </Modal>
@@ -321,13 +321,15 @@ const Home = () => {
                   >
                     <td className="py-3 px-4 text-center">
                       <div 
-                        className="w-12 h-12 cursor-pointer mx-auto" 
+                        className="relative w-12 h-12 cursor-pointer mx-auto" 
                         onClick={(e) => handleImageClick(e, getImageUrl(item))}
                       >
-                        <img 
-                          src={getImageUrl(item)} 
-                          alt={item.name} 
-                          className="w-full h-full object-cover rounded border border-gray-300"
+                        <Image
+                          src={getImageUrl(item)}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded border border-gray-300"
+                          sizes="48px"
                         />
                       </div>
                     </td>
@@ -392,13 +394,15 @@ const Home = () => {
                   >
                     <td className="py-3 px-4 text-center">
                       <div 
-                        className="w-12 h-12 cursor-pointer mx-auto" 
+                        className="relative w-12 h-12 cursor-pointer mx-auto" 
                         onClick={(e) => handleImageClick(e, getImageUrl(item))}
                       >
-                        <img 
-                          src={getImageUrl(item)} 
-                          alt={item.name} 
-                          className="w-full h-full object-cover rounded border border-gray-300"
+                        <Image
+                          src={getImageUrl(item)}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded border border-gray-300"
+                          sizes="48px"
                         />
                       </div>
                     </td>
