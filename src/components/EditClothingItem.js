@@ -61,6 +61,7 @@ const EditClothingItem = ({ item: initialItem, onItemUpdated, onClose }) => {
     formData.append('location', item.location);
     formData.append('count', item.count || '1'); 
     
+    // Only append new image if one was selected
     if (imageFile) {
       formData.append('image_url', imageFile);
     }

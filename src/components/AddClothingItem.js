@@ -58,7 +58,10 @@ const AddClothingItem = ({ onItemAdded, onClose }) => {
     if (secondaryColor) { // Only append if secondary color is selected
       formData.append('secondary_color', secondaryColor);
     }
-    formData.append('image_url', imageFile);
+    // Only append image if one was selected
+    if (imageFile) {
+      formData.append('image_url', imageFile);
+    }
     formData.append('location', location);
     formData.append('count', count || '1'); // Default to 1 if not set
 
@@ -146,12 +149,11 @@ const AddClothingItem = ({ onItemAdded, onClose }) => {
         onChange={(e) => setCount(e.target.value)}
         className="border rounded p-2 mb-2 w-full"
       />
-      <label className="block mb-1">Upload Image</label>
+      <label className="block mb-1">Upload Image (Optional)</label>
       <input
         type="file"
         onChange={(e) => setImageFile(e.target.files[0])}
         className="border rounded p-2 mb-2 w-full"
-        required
       />
       <button type="submit" className="bg-blue-500 text-white rounded p-2" disabled={loading}>
         {loading ? 'Adding...' : 'Add Item'}

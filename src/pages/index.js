@@ -1,11 +1,58 @@
 import { useEffect, useState } from 'react';
+import ReactDOMServer from 'react-dom/server';
 import axiosInstance from '../utils/axiosInstance';
 import AddClothingItem from '../components/AddClothingItem';
 import EditClothingItem from '../components/EditClothingItem';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
+import { 
+  FaTshirt, 
+  FaHatCowboy, 
+  FaSuitcase, 
+  FaShoppingBag, 
+  FaQuestion,
+  FaShoePrints,
+  FaScarf,
+  FaGem
+} from 'react-icons/fa';
+import { 
+  GiArmoredPants, 
+  GiMonclerJacket, 
+  GiRunningShoe,
+  GiSkirt,
+  GiTrousers,
+  GiPoloShirt,
+  GiLargeDress,
+  GiBelt,
+  GiLabCoat,
+  GiSleevelessJacket
+} from 'react-icons/gi';
 
 const CARD_WIDTH = '250px'; // You can adjust this value as needed
+
+const categories = [
+  "Dress",
+  "Shirt",
+  "T-Shirt",
+  "Blouse",
+  "Sweater",
+  "Jacket",
+  "Coat",
+  "Pants",
+  "Jeans",
+  "Skirt",
+  "Shorts",
+  "Suit",
+  "Blazer",
+  "Hat",
+  "Scarf",
+  "Belt",
+  "Shoes",
+  "Boots",
+  "Sneakers",
+  "Bag",
+  "Accessories"
+];
 
 const Home = () => {
   const [clothingItems, setClothingItems] = useState([]);
@@ -16,6 +63,9 @@ const Home = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const fetchClothingItems = async () => {
@@ -28,6 +78,16 @@ const Home = () => {
     };
 
     fetchClothingItems();
+  }, []);
+
+  useEffect(() => {
+    // Add window resize listener for responsive layout
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const handleSearch = (e) => {
@@ -107,60 +167,281 @@ const Home = () => {
     });
   };
 
-  const categories = [...new Set(clothingItems.map(item => item.category))]; // Unique categories
+  const handleImageClick = (e, imageUrl) => {
+    e.stopPropagation(); // Prevent triggering the row selection
+    setSelectedImage(imageUrl);
+    setShowImageModal(true);
+  };
+
   const colors = [...new Set(clothingItems.map(item => item.main_color))]; // Unique colors
 
   const filteredItems = clothingItems.filter(item => {
     return (
+      (item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+       item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       item.main_color.toLowerCase().includes(searchQuery.toLowerCase())) &&
       (selectedCategory === '' || item.category === selectedCategory) &&
       (selectedColor === '' || item.main_color === selectedColor)
     );
   });
 
+  // Get category icon component
+  const getCategoryIcon = (category) => {
+    const iconProps = { className: 'inline-block mr-2', size: 20 };
+    switch (category.toLowerCase()) {
+      case 'dress': return <GiLargeDress {...iconProps} />;
+      case 'shirt': return <GiPoloShirt {...iconProps} />;
+      case 't-shirt': return <FaTshirt {...iconProps} />;
+      case 'blouse': return <FaTshirt {...iconProps} />;
+      case 'sweater': return <FaTshirt {...iconProps} />;
+      case 'jacket': return <GiMonclerJacket {...iconProps} />;
+      case 'coat': return <GiLabCoat {...iconProps} />;
+      case 'pants': return <GiTrousers {...iconProps} />;
+      case 'jeans': return <GiArmoredPants {...iconProps} />;
+      case 'skirt': return <GiSkirt {...iconProps} />;
+      case 'shorts': return <GiTrousers {...iconProps} />;
+      case 'suit': return <FaSuitcase {...iconProps} />;
+      case 'blazer': return <GiSleevelessJacket {...iconProps} />;
+      case 'hat': return <FaHatCowboy {...iconProps} />;
+      case 'scarf': return <FaScarf {...iconProps} />;
+      case 'belt': return <GiBelt {...iconProps} />;
+      case 'shoes': return <GiRunningShoe {...iconProps} />;
+      case 'boots': return <FaShoePrints {...iconProps} />;
+      case 'sneakers': return <GiRunningShoe {...iconProps} />;
+      case 'bag': return <FaShoppingBag {...iconProps} />;
+      case 'accessories': return <FaGem {...iconProps} />;
+      default: return <FaQuestion {...iconProps} />;
+    }
+  };
+
+  // Function to get placeholder image if image_url is blank
+  const getImageUrl = (item) => {
+    if (!item.image_url) {
+      return `data:image/svg+xml,${encodeURIComponent(
+        ReactDOMServer.renderToString(getCategoryIcon(item.category))
+      )}`;
+    }
+    return item.image_url;
+  };
+
+  // Color box component
+  const ColorBox = ({ color }) => (
+    <span 
+      className="inline-block w-4 h-4 rounded border border-gray-300 mr-2" 
+      style={{ backgroundColor: color.toLowerCase() }}
+    />
+  );
+
   return (
     <div className="container mx-auto p-4 text-white">
       <h1 className="text-3xl font-bold mb-4 text-center">Digital Wardrobe</h1>
-      <div className="flex flex-col items-center mb-4">
-        <button 
-          onClick={() => {
-            setIsEditing(false);
-            setIsModalOpen(true);
-          }} 
-          className="bg-green-500 text-white rounded p-2 mb-4"
-        >
-          Add Item
-        </button>
-        <input
-          type="text"
-          placeholder="Search clothing items..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="border rounded p-2 mb-4 w-full md:w-1/2 bg-gray-800 text-white"
-        />
-      </div>
-      <div className="flex justify-center mb-4">
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border rounded p-2 mx-2"
-        >
-          <option value="">All Categories</option>
-          {categories.map((category) => (
-            <option key={category} value={category}>{category}</option>
-          ))}
-        </select>
 
-        <select
-          value={selectedColor}
-          onChange={(e) => setSelectedColor(e.target.value)}
-          className="border rounded p-2 mx-2"
-        >
-          <option value="">All Colors</option>
-          {colors.map((color) => (
-            <option key={color} value={color}>{color}</option>
-          ))}
-        </select>
+      {/* Search and Filters Section */}
+      <div className="mb-6 space-y-4">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex-1 w-full md:w-auto">
+            <input
+              type="text"
+              placeholder="Search items..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <Button onClick={() => setIsModalOpen(true)} className="w-full md:w-auto whitespace-nowrap">
+            Add Item
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap justify-center gap-2">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Categories</option>
+            {categories.map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+
+          <select
+            value={selectedColor}
+            onChange={(e) => setSelectedColor(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Colors</option>
+            {Array.from(new Set(clothingItems.map(item => item.main_color))).map(color => (
+              <option key={color} value={color}>{color}</option>
+            ))}
+          </select>
+
+          {selectedItems.length > 0 && (
+            <Button onClick={swapLocations} className="whitespace-nowrap">
+              Swap Location ({selectedItems.length})
+            </Button>
+          )}
+        </div>
       </div>
+
+      {/* Image Modal */}
+      <Modal isOpen={showImageModal} onClose={() => setShowImageModal(false)}>
+        <div className="flex justify-center items-center h-full">
+          {selectedImage && (
+            <img 
+              src={selectedImage} 
+              alt="Enlarged view" 
+              className="max-h-[80vh] max-w-[80vw] object-contain"
+            />
+          )}
+        </div>
+      </Modal>
+
+      {/* Responsive layout - side by side on desktop, stacked on mobile */}
+      <div className={`flex ${windowWidth < 768 ? 'flex-col space-y-8' : 'flex-row space-x-4'}`}>
+        <div className={`${windowWidth < 768 ? 'w-full' : 'w-1/2'}`}>
+          <h2 className="text-2xl font-bold mb-4 text-center">London</h2>
+          <div className="bg-white rounded-lg overflow-hidden shadow-lg">
+            <table className="w-full border-collapse text-black">
+              <thead>
+                <tr className="border-b-2 border-gray-300">
+                  <th className="py-3 px-4 w-16 text-center">Image</th>
+                  <th className="py-3 px-4 text-left">Name</th>
+                  <th className="py-3 px-4 text-left hidden md:table-cell">Category</th>
+                  <th className="py-3 px-4 text-left hidden md:table-cell">Color</th>
+                  <th className="py-3 px-4 w-24 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredItems.filter(item => item.location === "London").map(item => (
+                  <tr 
+                    key={item.id} 
+                    className={`border-b border-gray-200 hover:bg-gray-100 transition-colors ${selectedItems.includes(item.id) ? 'bg-blue-100' : ''}`}
+                    onClick={() => handleCardClick(item.id)}
+                  >
+                    <td className="py-3 px-4 text-center">
+                      <div 
+                        className="w-12 h-12 cursor-pointer mx-auto" 
+                        onClick={(e) => handleImageClick(e, getImageUrl(item))}
+                      >
+                        <img 
+                          src={getImageUrl(item)} 
+                          alt={item.name} 
+                          className="w-full h-full object-cover rounded border border-gray-300"
+                        />
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 font-medium">{item.name}</td>
+                    <td className="py-3 px-4 hidden md:table-cell">
+                      {getCategoryIcon(item.category)} {item.category}
+                    </td>
+                    <td className="py-3 px-4 hidden md:table-cell">
+                      <ColorBox color={item.main_color} /> {item.main_color}
+                    </td>
+                    <td className="py-3 px-4 flex space-x-1 justify-center">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(item.id);
+                        }}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(item.id);
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {filteredItems.filter(item => item.location === "London").length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="py-4 text-center text-gray-500">No items found in London</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className={`${windowWidth < 768 ? 'w-full' : 'w-1/2'}`}>
+          <h2 className="text-2xl font-bold mb-4 text-center">Stockholm</h2>
+          <div className="bg-white rounded-lg overflow-hidden shadow-lg">
+            <table className="w-full border-collapse text-black">
+              <thead>
+                <tr className="border-b-2 border-gray-300">
+                  <th className="py-3 px-4 w-16 text-center">Image</th>
+                  <th className="py-3 px-4 text-left">Name</th>
+                  <th className="py-3 px-4 text-left hidden md:table-cell">Category</th>
+                  <th className="py-3 px-4 text-left hidden md:table-cell">Color</th>
+                  <th className="py-3 px-4 w-24 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredItems.filter(item => item.location === "Stockholm").map(item => (
+                  <tr 
+                    key={item.id} 
+                    className={`border-b border-gray-200 hover:bg-gray-100 transition-colors ${selectedItems.includes(item.id) ? 'bg-blue-100' : ''}`}
+                    onClick={() => handleCardClick(item.id)}
+                  >
+                    <td className="py-3 px-4 text-center">
+                      <div 
+                        className="w-12 h-12 cursor-pointer mx-auto" 
+                        onClick={(e) => handleImageClick(e, getImageUrl(item))}
+                      >
+                        <img 
+                          src={getImageUrl(item)} 
+                          alt={item.name} 
+                          className="w-full h-full object-cover rounded border border-gray-300"
+                        />
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 font-medium">{item.name}</td>
+                    <td className="py-3 px-4 hidden md:table-cell">
+                      {getCategoryIcon(item.category)} {item.category}
+                    </td>
+                    <td className="py-3 px-4 hidden md:table-cell">
+                      <ColorBox color={item.main_color} /> {item.main_color}
+                    </td>
+                    <td className="py-3 px-4 flex space-x-1 justify-center">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditClick(item.id);
+                        }}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(item.id);
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {filteredItems.filter(item => item.location === "Stockholm").length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="py-4 text-center text-gray-500">No items found in Stockholm</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         {isEditing ? (
           <EditClothingItem
@@ -181,54 +462,6 @@ const Home = () => {
           />
         )}
       </Modal>
-      
-      <div className="flex flex-col items-center justify-center mb-4">
-        <Button onClick={swapLocations} className="mb-4">Swap Locations</Button>
-      </div>
-
-      <div className="flex justify-between">
-        <div className="w-1/2 pr-2">
-          <h2 className="text-2xl font-bold mb-4 text-center">London</h2>
-          <div className="flex flex-wrap justify-center">
-            {filteredItems.filter(item => item.location === "London").map(item => (
-              <div key={item.id} 
-                   className={`border p-2 rounded-lg shadow-lg hover:shadow-xl transition-shadow mb-2 mx-2 ${selectedItems.includes(item.id) ? 'border-blue-500 bg-blue-600' : ''}`} 
-                   onClick={() => handleCardClick(item.id)}
-                   style={{ width: '100%', maxWidth: CARD_WIDTH }}>
-                <img src={item.image_url} alt={item.name} className="w-full h-32 object-cover mb-2 rounded" />
-                <h2 className="text-lg font-semibold">{item.name}</h2>
-                <p className="text-sm">Category: {item.category}</p>
-                <p className="text-sm">Main Color: {item.main_color}</p>
-                <div className="flex space-x-2 mt-2">
-                  <Button onClick={() => handleEditClick(item.id)} type="yellow">Edit</Button>
-                  <Button onClick={() => handleDeleteClick(item.id)} type="red">Delete</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="w-1/2 pl-2">
-          <h2 className="text-2xl font-bold mb-4 text-center">Stockholm</h2>
-          <div className="flex flex-wrap justify-center">
-            {filteredItems.filter(item => item.location === "Stockholm").map(item => (
-              <div key={item.id} 
-                   className={`border p-2 rounded-lg shadow-lg hover:shadow-xl transition-shadow mb-2 mx-2 ${selectedItems.includes(item.id) ? 'border-blue-500 bg-blue-600' : ''}`} 
-                   onClick={() => handleCardClick(item.id)}
-                   style={{ width: '100%', maxWidth: CARD_WIDTH }}>
-                <img src={item.image_url} alt={item.name} className="w-full h-32 object-cover mb-2 rounded" />
-                <h2 className="text-lg font-semibold">{item.name}</h2>
-                <p className="text-sm">Category: {item.category}</p>
-                <p className="text-sm">Main Color: {item.main_color}</p>
-                <div className="flex space-x-2 mt-2">
-                  <Button onClick={() => handleEditClick(item.id)} type="yellow">Edit</Button>
-                  <Button onClick={() => handleDeleteClick(item.id)} type="red">Delete</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
