@@ -14,7 +14,8 @@ import {
   FaQuestion,
   FaShoePrints,
   FaScarf,
-  FaGem
+  FaGem,
+  FaFemale
 } from 'react-icons/fa';
 import { 
   GiArmoredPants, 
@@ -30,27 +31,28 @@ import {
 } from 'react-icons/gi';
 
 const categories = [
-  "Dress",
-  "Shirt",
-  "T-Shirt",
-  "Blouse",
-  "Sweater",
-  "Jacket",
-  "Coat",
-  "Pants",
-  "Jeans",
-  "Skirt",
-  "Shorts",
-  "Suit",
-  "Blazer",
-  "Hat",
-  "Scarf",
-  "Belt",
-  "Shoes",
-  "Boots",
-  "Sneakers",
+  "Accessories",
   "Bag",
-  "Accessories"
+  "Belt",
+  "Blazer",
+  "Blouse",
+  "Boots",
+  "Bra",
+  "Coat",
+  "Dress",
+  "Hat",
+  "Jacket",
+  "Jeans",
+  "Pants",
+  "Scarf",
+  "Shirt",
+  "Shoes",
+  "Shorts",
+  "Skirt",
+  "Sneakers",
+  "Sweater",
+  "Suit",
+  "T-Shirt"
 ];
 
 const Home = () => {
@@ -183,30 +185,53 @@ const Home = () => {
 
   // Get category icon component
   const getCategoryIcon = (category) => {
-    const iconProps = { className: 'inline-block mr-2', size: 20 };
-    switch (category.toLowerCase()) {
-      case 'dress': return <GiLargeDress {...iconProps} />;
-      case 'shirt': return <GiPoloShirt {...iconProps} />;
-      case 't-shirt': return <FaTshirt {...iconProps} />;
-      case 'blouse': return <FaTshirt {...iconProps} />;
-      case 'sweater': return <FaTshirt {...iconProps} />;
-      case 'jacket': return <GiMonclerJacket {...iconProps} />;
-      case 'coat': return <GiLabCoat {...iconProps} />;
-      case 'pants': return <GiTrousers {...iconProps} />;
-      case 'jeans': return <GiArmoredPants {...iconProps} />;
-      case 'skirt': return <GiSkirt {...iconProps} />;
-      case 'shorts': return <GiTrousers {...iconProps} />;
-      case 'suit': return <FaSuitcase {...iconProps} />;
-      case 'blazer': return <GiSleevelessJacket {...iconProps} />;
-      case 'hat': return <FaHatCowboy {...iconProps} />;
-      case 'scarf': return <FaScarf {...iconProps} />;
-      case 'belt': return <GiBelt {...iconProps} />;
-      case 'shoes': return <GiRunningShoe {...iconProps} />;
-      case 'boots': return <FaShoePrints {...iconProps} />;
-      case 'sneakers': return <GiRunningShoe {...iconProps} />;
-      case 'bag': return <FaShoppingBag {...iconProps} />;
-      case 'accessories': return <FaGem {...iconProps} />;
-      default: return <FaQuestion {...iconProps} />;
+    switch (category) {
+      case 'Dress':
+        return <GiLargeDress className="w-4 h-4 inline-block" />;
+      case 'Shirt':
+        return <GiPoloShirt className="w-4 h-4 inline-block" />;
+      case 'T-Shirt':
+        return <FaTshirt className="w-4 h-4 inline-block" />;
+      case 'Blouse':
+        return <GiLabCoat className="w-4 h-4 inline-block" />;
+      case 'Sweater':
+        return <GiSleevelessJacket className="w-4 h-4 inline-block" />;
+      case 'Jacket':
+        return <GiMonclerJacket className="w-4 h-4 inline-block" />;
+      case 'Coat':
+        return <GiLabCoat className="w-4 h-4 inline-block" />;
+      case 'Pants':
+        return <GiTrousers className="w-4 h-4 inline-block" />;
+      case 'Jeans':
+        return <GiArmoredPants className="w-4 h-4 inline-block" />;
+      case 'Skirt':
+        return <GiSkirt className="w-4 h-4 inline-block" />;
+      case 'Shorts':
+        return <GiTrousers className="w-4 h-4 inline-block" />;
+      case 'Suit':
+        return <GiSuitcase className="w-4 h-4 inline-block" />;
+      case 'Blazer':
+        return <GiMonclerJacket className="w-4 h-4 inline-block" />;
+      case 'Hat':
+        return <FaHatCowboy className="w-4 h-4 inline-block" />;
+      case 'Scarf':
+        return <FaScarf className="w-4 h-4 inline-block" />;
+      case 'Belt':
+        return <GiBelt className="w-4 h-4 inline-block" />;
+      case 'Shoes':
+        return <FaShoePrints className="w-4 h-4 inline-block" />;
+      case 'Boots':
+        return <GiRunningShoe className="w-4 h-4 inline-block" />;
+      case 'Sneakers':
+        return <GiRunningShoe className="w-4 h-4 inline-block" />;
+      case 'Bag':
+        return <FaShoppingBag className="w-4 h-4 inline-block" />;
+      case 'Accessories':
+        return <FaGem className="w-4 h-4 inline-block" />;
+      case 'Bra':
+        return <FaFemale className="w-4 h-4 inline-block" />;
+      default:
+        return <FaQuestion className="w-4 h-4 inline-block" />;
     }
   };
 

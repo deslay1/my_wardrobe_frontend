@@ -7,27 +7,28 @@ import ColorSelect from './ColorSelect';
 const locations = ["London", "Stockholm"];
 
 const categories = [
-  "Dress",
-  "Shirt",
-  "T-Shirt",
-  "Blouse",
-  "Sweater",
-  "Jacket",
-  "Coat",
-  "Pants",
-  "Jeans",
-  "Skirt",
-  "Shorts",
-  "Suit",
-  "Blazer",
-  "Hat",
-  "Scarf",
-  "Belt",
-  "Shoes",
-  "Boots",
-  "Sneakers",
+  "Accessories",
   "Bag",
-  "Accessories"
+  "Belt",
+  "Blazer",
+  "Blouse",
+  "Boots",
+  "Bra",
+  "Coat",
+  "Dress",
+  "Hat",
+  "Jacket",
+  "Jeans",
+  "Pants",
+  "Scarf",
+  "Shirt",
+  "Shoes",
+  "Shorts",
+  "Skirt",
+  "Sneakers",
+  "Sweater",
+  "Suit",
+  "T-Shirt"
 ];
 
 const colors = [
