@@ -8,8 +8,7 @@ import Modal from '../components/Modal';
 import Button from '../components/Button';
 import { 
   FaTshirt, 
-  FaHatCowboy, 
-  FaSuitcase, 
+  FaHatCowboy,
   FaShoppingBag, 
   FaQuestion,
   FaShoePrints,
@@ -27,7 +26,8 @@ import {
   GiLargeDress,
   GiBelt,
   GiLabCoat,
-  GiSleevelessJacket
+  GiSleevelessJacket,
+  GiSuitcase
 } from 'react-icons/gi';
 
 const categories = [
