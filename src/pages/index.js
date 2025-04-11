@@ -174,6 +174,11 @@ const Home = () => {
     setShowImageModal(true);
   };
 
+  const handleImageModalClose = () => {
+    setShowImageModal(false);
+    setSelectedImage(null);
+  };
+
   const filteredItems = clothingItems.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -305,20 +310,17 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Image Modal */}
-      <Modal isOpen={showImageModal} onClose={() => setShowImageModal(false)}>
+      {/* Image Preview Modal */}
+      <Modal isOpen={showImageModal} onClose={handleImageModalClose} isImagePreview>
         <div className="flex justify-center items-center h-full">
-          {selectedImage && (
-            <div className="relative w-full h-[80vh]">
-              <Image
-                src={selectedImage}
-                alt="Selected clothing item"
-                fill
-                style={{ objectFit: 'contain' }}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-              />
-            </div>
-          )}
+          <Image
+            src={selectedImage}
+            alt="Preview"
+            width={800}
+            height={800}
+            className="max-w-full max-h-[80vh] object-contain"
+            sizes="(max-width: 768px) 100vw, 800px"
+          />
         </div>
       </Modal>
 
